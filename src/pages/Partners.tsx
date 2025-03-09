@@ -5,88 +5,80 @@ import Header from '@/components/Header';
 import NavBar from '@/components/NavBar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, Filter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Search, UsersRound } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 const Partners = () => {
   const { partners } = useApp();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   
-  const categories = ['Todos', ...new Set(partners.map(partner => partner.category))];
-  const [selectedCategory, setSelectedCategory] = useState('Todos');
+  const categories = [...new Set(partners.map(partner => partner.category))];
   
-  const filteredPartners = partners.filter(partner => {
-    const matchesSearch = partner.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                        partner.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'Todos' || partner.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredPartners = partners.filter(partner => 
+    partner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    partner.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header title="Parceiros" showBackButton showNotifications />
+      <Header title="Parceiros" showBackButton />
       
-      <main className="flex-1 p-4 pb-20">
-        <div className="relative mb-4">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-          <Input 
-            placeholder="Buscar parceiros..." 
-            className="pl-9"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+      <main className="flex-1 pb-20 p-4 space-y-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+          <Input
+            className="pl-10"
+            placeholder="Buscar parceiros..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         
-        <div className="flex overflow-x-auto pb-2 mb-4 -mx-1 px-1">
-          {categories.map((category) => (
-            <button
-              key={category}
-              className={`px-3 py-1.5 mr-2 rounded-full text-sm whitespace-nowrap ${
-                selectedCategory === category 
-                  ? 'bg-brand-green text-white' 
-                  : 'bg-gray-100 text-gray-800'
-              }`}
-              onClick={() => setSelectedCategory(category)}
+        {searchTerm === '' && (
+          <div className="flex overflow-x-auto pb-2 space-x-2">
+            {categories.map(category => (
+              <button
+                key={category}
+                onClick={() => setSearchTerm(category)}
+                className="flex-shrink-0 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-sm hover:border-brand-green hover:text-brand-green transition-colors"
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        )}
+        
+        <div className="grid grid-cols-2 gap-4">
+          {filteredPartners.map((partner) => (
+            <Card 
+              key={partner.id} 
+              className="overflow-hidden border-none shadow-sm hover:shadow-md transition-shadow"
+              onClick={() => navigate(`/partner/${partner.id}`)}
             >
-              {category}
-            </button>
+              <CardContent className="p-3 flex flex-col items-center">
+                <img 
+                  src={partner.logo} 
+                  alt={partner.name} 
+                  className="w-16 h-16 object-contain mb-2"
+                />
+                <h3 className="font-semibold text-sm text-center">{partner.name}</h3>
+                <Badge className="mt-1 bg-brand-green">
+                  {partner.cashbackPercentage}% cashback
+                </Badge>
+                <p className="text-xs text-gray-500 mt-1">{partner.category}</p>
+              </CardContent>
+            </Card>
           ))}
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {filteredPartners.length === 0 ? (
-            <div className="col-span-full text-center py-8 text-gray-500">
-              Nenhum parceiro encontrado
-            </div>
-          ) : (
-            filteredPartners.map((partner) => (
-              <Card 
-                key={partner.id} 
-                className="overflow-hidden border-none shadow-md hover:shadow-lg transition-shadow"
-                onClick={() => navigate(`/partner/${partner.id}`)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center">
-                    <img 
-                      src={partner.logo} 
-                      alt={partner.name} 
-                      className="w-16 h-16 object-contain mr-4"
-                    />
-                    <div className="flex-1">
-                      <h3 className="font-bold">{partner.name}</h3>
-                      <p className="text-sm text-gray-500 line-clamp-2 mb-1.5">{partner.description}</p>
-                      <Badge className="bg-brand-green">
-                        {partner.cashbackPercentage}% cashback
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </div>
+        {filteredPartners.length === 0 && (
+          <div className="text-center py-10">
+            <UsersRound className="mx-auto h-12 w-12 text-gray-400" />
+            <p className="mt-4 text-gray-500">Nenhum parceiro encontrado</p>
+          </div>
+        )}
       </main>
       
       <NavBar />
