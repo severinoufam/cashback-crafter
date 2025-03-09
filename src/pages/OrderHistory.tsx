@@ -13,7 +13,7 @@ const OrderHistory = () => {
       <Header title="Meus Pedidos" showBackButton />
       
       <main className="flex-1 pb-20 p-4">
-        <OrderList orders={orders} showStatus />
+        <OrderList orders={orders} />
       </main>
       
       <NavBar />

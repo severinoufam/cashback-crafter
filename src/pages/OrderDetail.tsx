@@ -1,15 +1,14 @@
-
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import Header from '@/components/Header';
 import NavBar from '@/components/NavBar';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { PackageIcon, Alert, Check, Truck, ChevronRight } from 'lucide-react';
+import { PackageIcon, AlertCircle, Check, Truck, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const OrderDetail = () => {
@@ -25,7 +24,7 @@ const OrderDetail = () => {
         <Header title="Detalhes do Pedido" showBackButton />
         <main className="flex-1 pb-20 p-4 flex items-center justify-center">
           <div className="text-center">
-            <Alert className="mx-auto h-12 w-12 text-red-500" />
+            <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
             <p className="mt-4 text-gray-500">Pedido não encontrado</p>
             <Button 
               variant="link" 
@@ -65,7 +64,7 @@ const OrderDetail = () => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'pending': return <Alert className="h-4 w-4" />;
+      case 'pending': return <AlertCircle className="h-4 w-4" />;
       case 'processing': return <PackageIcon className="h-4 w-4" />;
       case 'shipped': return <Truck className="h-4 w-4" />;
       case 'delivered': return <Check className="h-4 w-4" />;
